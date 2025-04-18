@@ -52,9 +52,9 @@
             reader.readAsDataURL(e.target.files[0]);
         }
 
-        // Đường dẫn frames được cập nhật
+        // Đường dẫn frames đã sửa đúng dạng raw.githubusercontent.com
         frameImg.crossOrigin = "anonymous";
-        frameImg.src = 'https://github.com/maichung/mcf304/raw/main/Frames.png';
+        frameImg.src = 'https://raw.githubusercontent.com/maichung/mcf304/main/Frames.png';
 
         function mergeImage() {
             if (!userImg.src) {
@@ -67,6 +67,7 @@
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(userImg, 0, 0, 1200, 1200);
+
             frameImg.onload = function() {
                 ctx.drawImage(frameImg, 0, 0, 1200, 1200);
 
@@ -76,7 +77,6 @@
                 link.click();
             }
 
-            // Đảm bảo frame vẫn được vẽ nếu đã tải từ trước
             if (frameImg.complete) {
                 ctx.drawImage(frameImg, 0, 0, 1200, 1200);
                 const link = document.createElement('a');
