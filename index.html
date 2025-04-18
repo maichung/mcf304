@@ -3,19 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chèn khung viền vào ảnh đại diện - MOSCOW FEED TỰ HÀO MỘT MÀU CỜ</title>
+    <title>Chèn khung viền vào ảnh đại diện</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            margin-top: 30px;
+            margin: 20px;
+            padding: 0;
+            box-sizing: border-box;
         }
         canvas {
             border: 1px solid #ccc;
-            margin-top: 20px;
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            margin: 20px auto;
         }
         input[type="file"], input[type="range"] {
             margin: 10px auto;
+            width: 90%;
+            max-width: 400px;
         }
         button {
             padding: 10px 20px;
@@ -26,10 +33,19 @@
         .controls {
             margin-top: 15px;
         }
+        @media (max-width: 600px) {
+            h2 {
+                font-size: 20px;
+            }
+            button {
+                width: 90%;
+                max-width: 400px;
+            }
+        }
     </style>
 </head>
 <body>
-    <h2>Chèn Khung Viền Ảnh Đại Diện - MOSCOW FEED TỰ HÀO MỘT MÀU CỜ</h2>
+    <h2>Chèn Khung Viền Ảnh Đại Diện</h2>
 
     <input type="file" id="userImage" accept="image/*">
     <div class="controls">
