@@ -52,8 +52,9 @@
             reader.readAsDataURL(e.target.files[0]);
         }
 
-        // Thay "frame.png" bằng URL thật hoặc đường dẫn của ảnh frame bạn có
-        frameImg.src = 'frame.png';
+        // Đường dẫn frames được cập nhật
+        frameImg.crossOrigin = "anonymous";
+        frameImg.src = 'https://github.com/maichung/mcf304/raw/main/Frames.png';
 
         function mergeImage() {
             if (!userImg.src) {
