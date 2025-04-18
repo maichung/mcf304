@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chèn khung viền vào ảnh đại diện</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        canvas {
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+        input[type="file"] {
+            margin: 10px auto;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Chèn Khung Viền Ảnh Đại Diện</h2>
+
+    <input type="file" id="userImage" accept="image/*">
+    <br>
+    <button onclick="mergeImage()">Chèn Frame và Tải Xuống</button>
+
+    <canvas id="canvas" width="1200" height="1200"></canvas>
+
+    <script>
+        let userImg = new Image();
+        let frameImg = new Image();
+
+        document.getElementById('userImage').onchange = function(e) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                userImg.src = event.target.result;
+                userImg.onload = function() {
+                    const canvas = document.getElementById('canvas');
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(userImg, 0, 0, 1200, 1200);
+                }
+            }
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        // Thay "frame.png" bằng URL thật hoặc đường dẫn của ảnh frame bạn có
+        frameImg.src = 'frame.png';
+
+        function mergeImage() {
+            if (!userImg.src) {
+                alert("Hãy upload ảnh trước!");
+                return;
+            }
+
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(userImg, 0, 0, 1200, 1200);
+            frameImg.onload = function() {
+                ctx.drawImage(frameImg, 0, 0, 1200, 1200);
+
+                const link = document.createElement('a');
+                link.download = 'avatar_with_frame.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+
+            // Đảm bảo frame vẫn được vẽ nếu đã tải từ trước
+            if (frameImg.complete) {
+                ctx.drawImage(frameImg, 0, 0, 1200, 1200);
+                const link = document.createElement('a');
+                link.download = 'avatar_with_frame.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }
+        }
+    </script>
+</body>
+</html>
