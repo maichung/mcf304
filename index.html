@@ -4,13 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chèn khung viền vào ảnh đại diện</title>
+
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             margin: 20px;
-            padding: 0;
-            box-sizing: border-box;
         }
         canvas {
             border: 1px solid #ccc;
@@ -19,7 +18,8 @@
             height: auto;
             margin: 20px auto;
         }
-        input[type="file"], input[type="range"] {
+        input[type="file"],
+        input[type="range"] {
             margin: 10px auto;
             width: 90%;
             max-width: 400px;
@@ -28,93 +28,119 @@
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
-            margin-top: 10px;
         }
         .controls {
             margin-top: 15px;
         }
-        @media (max-width: 600px) {
-            h2 {
-                font-size: 20px;
-            }
-            button {
-                width: 90%;
-                max-width: 400px;
-            }
-        }
     </style>
 </head>
+
 <body>
     <h2>MOSCOW FEED - VƯỢT NGƯỠNG THÀNH CÔNG 2026</h2>
 
     <input type="file" id="userImage" accept="image/*">
+
     <div class="controls">
-        Phóng to / Thu nhỏ: <input type="range" id="scale" min="0.5" max="2" value="1" step="0.01">
-        Xoay: <input type="range" id="rotate" min="0" max="360" value="0">
+        Phóng to / Thu nhỏ:
+        <input type="range" id="scale" min="0.5" max="2" value="1" step="0.01">
+        <br>
+        Xoay:
+        <input type="range" id="rotate" min="0" max="360" value="0">
     </div>
+
     <button onclick="mergeImage()">Chèn KHUNG và Tải Xuống</button>
 
     <canvas id="canvas" width="1200" height="1200"></canvas>
 
     <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
         let userImg = new Image();
         let frameImg = new Image();
         let scale = 1;
         let rotate = 0;
 
-        document.getElementById('userImage').onchange = function(e) {
+        // Upload ảnh người dùng
+        document.getElementById('userImage').addEventListener('change', function (e) {
             const reader = new FileReader();
-            reader.onload = function(event) {
+            reader.onload = function (event) {
                 userImg.src = event.target.result;
                 userImg.onload = drawCanvas;
-            }
+            };
             reader.readAsDataURL(e.target.files[0]);
-        }
+        });
 
-        document.getElementById('scale').oninput = function(e) {
-            scale = e.target.value;
+        // Scale
+        document.getElementById('scale').addEventListener('input', function (e) {
+            scale = parseFloat(e.target.value);
             drawCanvas();
-        }
+        });
 
-        document.getElementById('rotate').oninput = function(e) {
-            rotate = e.target.value;
+        // Rotate
+        document.getElementById('rotate').addEventListener('input', function (e) {
+            rotate = parseFloat(e.target.value);
             drawCanvas();
-        }
+        });
 
+        // Load frame
         frameImg.crossOrigin = "anonymous";
-        frameImg.src = 'https://raw.githubusercontent.com/maichung/mcf304/main/vuotnguong2026.png';
+        frameImg.src = "https://raw.githubusercontent.com/maichung/mcf304/main/vuotnguong2026.png";
+        frameImg.onload = drawCanvas;
 
+        // Vẽ canvas (FIX MÉO ẢNH)
         function drawCanvas() {
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (!userImg.src) return;
+
+            const imgRatio = userImg.width / userImg.height;
+            const canvasRatio = canvas.width / canvas.height;
+
+            let drawWidth, drawHeight;
+
+            // Giữ đúng tỉ lệ ảnh (cover canvas)
+            if (imgRatio > canvasRatio) {
+                drawHeight = canvas.height;
+                drawWidth = drawHeight * imgRatio;
+            } else {
+                drawWidth = canvas.width;
+                drawHeight = drawWidth / imgRatio;
+            }
 
             ctx.save();
             ctx.translate(canvas.width / 2, canvas.height / 2);
             ctx.rotate(rotate * Math.PI / 180);
             ctx.scale(scale, scale);
-            ctx.drawImage(userImg, -600, -600, 1200, 1200);
+
+            ctx.drawImage(
+                userImg,
+                -drawWidth / 2,
+                -drawHeight / 2,
+                drawWidth,
+                drawHeight
+            );
+
             ctx.restore();
 
+            // Vẽ khung viền
             if (frameImg.complete) {
-                ctx.drawImage(frameImg, 0, 0, 1200, 1200);
+                ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
             }
         }
 
+        // Tải ảnh xuống
         function mergeImage() {
             if (!userImg.src) {
                 alert("Hãy upload ảnh trước!");
                 return;
             }
 
-            const canvas = document.getElementById('canvas');
             const link = document.createElement('a');
-            link.download = 'avatar_with_frame.png';
+            link.download = 'avatar_moscow_feed_2026.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         }
-
-        frameImg.onload = drawCanvas;
     </script>
 </body>
 </html>
