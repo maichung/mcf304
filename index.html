@@ -3,55 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chèn khung viền vào ảnh đại diện</title>
+    <title>MOSCOW FEED – VƯỢT NGƯỠNG THÀNH CÔNG 2026</title>
 
     <style>
+        /* ===== NỀN ĐỘNG XANH – ĐỎ ===== */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            margin: 20px;
+            margin: 0;
+            padding: 20px;
+
+            background: linear-gradient(
+                120deg,
+                #0b4da2,
+                #0f6cd6,
+                #c81d25,
+                #9b111e
+            );
+            background-size: 400% 400%;
+            animation: energyFlow 10s ease-in-out infinite;
+
+            min-height: 100vh;
         }
-        canvas {
-            border: 1px solid #ccc;
-            width: 100%;
-            max-width: 600px;
-            height: auto;
-            margin: 20px auto;
+
+        @keyframes energyFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
+
+        /* ===== TIÊU ĐỀ ===== */
+        .title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+
+            color: #fff;
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 20px;
+
+            text-shadow:
+                0 0 10px rgba(255,255,255,0.3),
+                0 5px 20px rgba(0,0,0,0.6);
+
+            animation: titlePulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        .hand-icon {
+            width: 38px;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.6));
+        }
+
+        /* ===== CONTROLS ===== */
         input[type="file"],
         input[type="range"] {
             margin: 10px auto;
             width: 90%;
             max-width: 400px;
+            display: block;
         }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
+
         .controls {
             margin-top: 15px;
+            color: #fff;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background: #ffffff;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        /* ===== CANVAS ===== */
+        canvas {
+            display: block;
+            margin: 20px auto;
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+
+            background: #fff;
+            border-radius: 14px;
+            box-shadow:
+                0 0 0 2px rgba(255,255,255,0.6),
+                0 15px 40px rgba(0,0,0,0.4);
         }
     </style>
 </head>
 
 <body>
+
     <h2 class="title">
-        <img src="https://raw.githubusercontent.com/maichung/mcf304/main/hand.png" alt="hand icon" class="hand-icon">
+        <img src="https://raw.githubusercontent.com/maichung/mcf304/main/hand.png" class="hand-icon">
         MOSCOW FEED - VƯỢT NGƯỠNG THÀNH CÔNG 2026
     </h2>
 
     <input type="file" id="userImage" accept="image/*">
 
     <div class="controls">
-        Phóng to / Thu nhỏ:
+        Phóng to / Thu nhỏ
         <input type="range" id="scale" min="0.5" max="2" value="1" step="0.01">
-        <br>
-        Xoay:
+
+        Xoay
         <input type="range" id="rotate" min="0" max="360" value="0">
     </div>
 
-    <button onclick="mergeImage()">Chèn KHUNG và Tải Xuống</button>
+    <button onclick="mergeImage()">CHÈN KHUNG & TẢI ẢNH</button>
 
     <canvas id="canvas" width="1200" height="1200"></canvas>
 
@@ -64,7 +138,6 @@
         let scale = 1;
         let rotate = 0;
 
-        // Upload ảnh người dùng
         document.getElementById('userImage').addEventListener('change', function (e) {
             const reader = new FileReader();
             reader.onload = function (event) {
@@ -74,27 +147,22 @@
             reader.readAsDataURL(e.target.files[0]);
         });
 
-        // Scale
-        document.getElementById('scale').addEventListener('input', function (e) {
+        document.getElementById('scale').addEventListener('input', e => {
             scale = parseFloat(e.target.value);
             drawCanvas();
         });
 
-        // Rotate
-        document.getElementById('rotate').addEventListener('input', function (e) {
+        document.getElementById('rotate').addEventListener('input', e => {
             rotate = parseFloat(e.target.value);
             drawCanvas();
         });
 
-        // Load frame
         frameImg.crossOrigin = "anonymous";
         frameImg.src = "https://raw.githubusercontent.com/maichung/mcf304/main/vuotnguong2026.png";
         frameImg.onload = drawCanvas;
 
-        // Vẽ canvas (FIX MÉO ẢNH)
         function drawCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
             if (!userImg.src) return;
 
             const imgRatio = userImg.width / userImg.height;
@@ -102,7 +170,6 @@
 
             let drawWidth, drawHeight;
 
-            // Giữ đúng tỉ lệ ảnh (cover canvas)
             if (imgRatio > canvasRatio) {
                 drawHeight = canvas.height;
                 drawWidth = drawHeight * imgRatio;
@@ -126,24 +193,22 @@
 
             ctx.restore();
 
-            // Vẽ khung viền
             if (frameImg.complete) {
                 ctx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
             }
         }
 
-        // Tải ảnh xuống
         function mergeImage() {
             if (!userImg.src) {
                 alert("Hãy upload ảnh trước!");
                 return;
             }
-
             const link = document.createElement('a');
             link.download = 'avatar_moscow_feed_2026.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
         }
     </script>
+
 </body>
 </html>
